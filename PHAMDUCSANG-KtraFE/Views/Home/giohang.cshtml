@@ -1,0 +1,679 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Giỏ Hàng - KtraFE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #eaeded;
+        }
+
+        header {
+            background-color: #131921;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+            display: flex;
+        }
+
+            .search-container input {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 4px 0 0 4px;
+                outline: none;
+            }
+
+            .search-container button {
+                padding: 10px 20px;
+                background-color: #febd69;
+                border: none;
+                border-radius: 0 4px 4px 0;
+                cursor: pointer;
+                color: #333;
+            }
+
+        .cart-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+            .cart-wrapper i {
+                font-size: 30px; 
+                margin-right: 5px;
+            }
+
+        #cart-count {
+            position: absolute;
+            top: -5px;
+            left: 14px;
+            color: #f08804;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        
+        main {
+            display: flex;
+            max-width: 1300px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+            align-items: flex-start;
+        }
+
+        .cart-left {
+            flex: 3;
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .cart-right {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+            .cart-header h1 {
+                font-weight: 400;
+                font-size: 28px;
+            }
+
+        .product-item {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+            .product-item input[type="checkbox"] {
+                margin-right: 15px;
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+            .product-item img {
+                width: 150px;
+                height: 150px;
+                object-fit: contain;
+                margin-right: 20px;
+            }
+
+        .product-info {
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 18px;
+            color: #007185;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .product-stock {
+            color: #007600;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        
+        .qty-box {
+            display: inline-flex;
+            align-items: center;
+            background: #f0f2f2;
+            border: 1px solid #d5d9d9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .qty-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #0f1111;
+        }
+
+            .qty-btn:hover {
+                background: #e3e6e6;
+            }
+
+        .qty-input {
+            width: 40px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #d5d9d9;
+            border-right: 1px solid #d5d9d9;
+            font-weight: bold;
+            background: white;
+            pointer-events: none;
+        }
+
+        .product-price-col {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        
+        .subtotal-text {
+            font-size: 18px;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+            .subtotal-text strong {
+                font-weight: bold;
+            }
+
+   
+        .checkout-btn {
+            width: 100%;
+            background: #ffd814;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+            .checkout-btn:hover {
+                background: #f7ca00;
+            }
+
+        .gift-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    
+    <header>
+        <a href="#" class="logo">
+            <img src="https://pngimg.com/uploads/amazon/amazon_PNG25.png" alt="Amazon Logo" style="height: 30px; vertical-align: middle;">
+        </a>
+        <div class="search-container">
+            <input type="text" placeholder="Tìm kiếm sản phẩm...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="cart-wrapper">
+
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count">0</span>
+            <span style="font-weight: bold; margin-left: 10px;">Cart</span>
+        </div>
+    </header>
+
+    <main>
+        
+        <div class="cart-left">
+            <div class="cart-header">
+                <h1>Shopping Cart</h1>
+                <p style="color: #565959;">Price</p>
+            </div>
+
+            <div id="product-list">
+                
+            </div>
+
+            <div class="subtotal-text">
+                Subtotal (<span class="total-qty">0</span> items): <strong>$<span class="total-price">0.00</span></strong>
+            </div>
+        </div>
+
+        
+        <div class="cart-right">
+            <div class="subtotal-text" style="text-align: left; margin-top: 0; font-size: 16px;">
+                Subtotal (<span class="total-qty">0</span> items): <strong>$<span class="total-price">0.00</span></strong>
+            </div>
+            <div class="gift-option">
+                <input type="checkbox" id="gift">
+                <label for="gift">This order contains a gift</label>
+            </div>
+            <button class="checkout-btn">Proceed to checkout</button>
+        </div>
+    </main>
+
+    
+    <script>
+
+        const products = [
+            { id: 1, name: "Tommy Hilfiger Women's Leather Saddle Shoulder Bag", price: 144.00, qty: 1, img: "https://m.media-amazon.com/images/I/61tPqfI7bZL._AC_UY695_.jpg" },
+            { id: 2, name: "Sam Edelman Women's Rosa Pump, Cape Blue", price: 98.00, qty: 1, img: "https://m.media-amazon.com/images/I/61b36wBMyTL._AC_UY695_.jpg" },
+            { id: 3, name: "Newchoice Dressy Casual Tops for Women Collared V Neck", price: 23.99, qty: 2, img: "https://m.media-amazon.com/images/I/71R2H2bW8FL._AC_UX679_.jpg" }
+        ];
+
+        
+        function renderCart() {
+            const listContainer = document.getElementById('product-list');
+            listContainer.innerHTML = '';
+
+            let totalQty = 0;
+            let totalPrice = 0;
+
+            products.forEach((product, index) => {
+                
+                const itemTotal = product.price * product.qty;
+
+                totalQty += product.qty;
+                totalPrice += itemTotal;
+
+                listContainer.innerHTML += `
+                    <div class="product-item">
+                        <input type="checkbox" checked>
+                        <img src="${product.img}" alt="Product image">
+                        <div class="product-info">
+                            <h3 class="product-title">${product.name}</h3>
+                            <p class="product-stock">In Stock</p>
+
+                            <div class="qty-box">
+                                <button class="qty-btn" onclick="changeQty(${index}, -1)"><i class="fas fa-minus"></i></button>
+                                <input type="text" class="qty-input" value="${product.qty}" readonly>
+                                <button class="qty-btn" onclick="changeQty(${index}, 1)"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-price-col">
+                            $${itemTotal.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            
+            document.getElementById('cart-count').innerText = totalQty;
+
+            
+            document.querySelectorAll('.total-qty').forEach(el => el.innerText = totalQty);
+            document.querySelectorAll('.total-price').forEach(el => el.innerText = totalPrice.toFixed(2));
+        }
+
+
+        function changeQty(index, amount) {
+            if (products[index].qty + amount >= 0) {
+                products[index].qty += amount;
+                renderCart(); 
+            }
+        }
+
+
+        renderCart();
+    </script>
+</body>
+</html>
+
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Giỏ Hàng - KtraFE</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #eaeded;
+        }
+
+        header {
+            background-color: #131921;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+            display: flex;
+        }
+
+            .search-container input {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 4px 0 0 4px;
+                outline: none;
+            }
+
+            .search-container button {
+                padding: 10px 20px;
+                background-color: #febd69;
+                border: none;
+                border-radius: 0 4px 4px 0;
+                cursor: pointer;
+                color: #333;
+            }
+
+        .cart-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+            .cart-wrapper i {
+                font-size: 30px;
+                margin-right: 5px;
+            }
+
+        #cart-count {
+            position: absolute;
+            top: -5px;
+            left: 14px;
+            color: #f08804;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        main {
+            display: flex;
+            max-width: 1300px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+            align-items: flex-start;
+        }
+
+        .cart-left {
+            flex: 3;
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .cart-right {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+            .cart-header h1 {
+                font-weight: 400;
+                font-size: 28px;
+            }
+
+        .product-item {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+            .product-item input[type="checkbox"] {
+                margin-right: 15px;
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+            .product-item img {
+                width: 150px;
+                height: 150px;
+                object-fit: contain;
+                margin-right: 20px;
+            }
+
+        .product-info {
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 18px;
+            color: #007185;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .product-stock {
+            color: #007600;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .qty-box {
+            display: inline-flex;
+            align-items: center;
+            background: #f0f2f2;
+            border: 1px solid #d5d9d9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .qty-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #0f1111;
+        }
+
+            .qty-btn:hover {
+                background: #e3e6e6;
+            }
+
+        .qty-input {
+            width: 40px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #d5d9d9;
+            border-right: 1px solid #d5d9d9;
+            font-weight: bold;
+            background: white;
+            pointer-events: none;
+        }
+
+        .product-price-col {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .subtotal-text {
+            font-size: 18px;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+            .subtotal-text strong {
+                font-weight: bold;
+            }
+
+        .checkout-btn {
+            width: 100%;
+            background: #ffd814;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+            .checkout-btn:hover {
+                background: #f7ca00;
+            }
+
+        .gift-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">Shop Logo</a>
+        <div class="search-container">
+            <input type="text" placeholder="Tìm kiếm sản phẩm...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="cart-wrapper">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count">0</span>
+            <span style="font-weight: bold; margin-left: 10px;">Cart</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="cart-left">
+            <div class="cart-header">
+                <h1>Shopping Cart</h1>
+                <p style="color: #565959;">Price</p>
+            </div>
+
+            <div id="product-list">
+            </div>
+
+            <div class="subtotal-text">
+                Subtotal (<span class="total-qty">0</span> items): <strong>$<span class="total-price">0.00</span></strong>
+            </div>
+        </div>
+
+        <div class="cart-right">
+            <div class="subtotal-text" style="text-align: left; margin-top: 0; font-size: 16px;">
+                Subtotal (<span class="total-qty">0</span> items): <strong>$<span class="total-price">0.00</span></strong>
+            </div>
+            <div class="gift-option">
+                <input type="checkbox" id="gift">
+                <label for="gift">This order contains a gift</label>
+            </div>
+            <button class="checkout-btn">Proceed to checkout</button>
+        </div>
+    </main>
+
+    <script>
+        const products = [
+            { id: 1, name: "Tommy Hilfiger Women's Leather Saddle Shoulder Bag", price: 144.00, qty: 1, img: "https://m.media-amazon.com/images/I/61tPqfI7bZL._AC_UY695_.jpg" },
+            { id: 2, name: "Sam Edelman Women's Rosa Pump, Cape Blue", price: 98.00, qty: 1, img: "https://m.media-amazon.com/images/I/61b36wBMyTL._AC_UY695_.jpg" },
+            { id: 3, name: "Newchoice Dressy Casual Tops for Women Collared V Neck", price: 23.99, qty: 2, img: "https://m.media-amazon.com/images/I/71R2H2bW8FL._AC_UX679_.jpg" }
+        ];
+
+        function renderCart() {
+            const listContainer = document.getElementById('product-list');
+            listContainer.innerHTML = '';
+
+            let totalQty = 0;
+            let totalPrice = 0;
+
+            products.forEach((product, index) => {
+                const itemTotal = product.price * product.qty;
+
+                totalQty += product.qty;
+                totalPrice += itemTotal;
+
+                listContainer.innerHTML += `
+                    <div class="product-item">
+                        <input type="checkbox" checked>
+                        <img src="${product.img}" alt="Product image">
+                        <div class="product-info">
+                            <h3 class="product-title">${product.name}</h3>
+                            <p class="product-stock">In Stock</p>
+
+                            <div class="qty-box">
+                                <button class="qty-btn" onclick="changeQty(${index}, -1)"><i class="fas fa-minus"></i></button>
+                                <input type="text" class="qty-input" value="${product.qty}" readonly>
+                                <button class="qty-btn" onclick="changeQty(${index}, 1)"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-price-col">
+                            $${itemTotal.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cart-count').innerText = totalQty;
+
+            document.querySelectorAll('.total-qty').forEach(el => el.innerText = totalQty);
+            document.querySelectorAll('.total-price').forEach(el => el.innerText = totalPrice.toFixed(2));
+        }
+
+        function changeQty(index, amount) {
+            if (products[index].qty + amount >= 0) {
+                products[index].qty += amount;
+                renderCart();
+            }
+        }
+
+        renderCart();
+    </script>
+</body>
+</html>
